@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ESG Platform - Manual Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .result {
+            background: #f0f0f0;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>ESG Platform - Manual Test Page</h1>
+
+    <h2>Step 1: Test Backend Connection</h2>
+    <button onclick="testBackend()">Test Backend</button>
+    <div id="backend-result" class="result"></div>
+
+    <h2>Step 2: Sign Up as Admin</h2>
+    <input type="text" id="name" placeholder="Your Name" value="Test Admin"><br>
+    <input type="email" id="email" placeholder="Email" value="admin@test.com"><br>
+    <input type="password" id="password" placeholder="Password" value="admin123"><br>
+    <button onclick="signup()">Sign Up as Admin</button>
+    <div id="signup-result" class="result"></div>
+
+    <h2>Step 3: Create Company</h2>
+    <input type="text" id="company-name" placeholder="Company Name" value="Microsoft"><br>
+    <input type="text" id="industry" placeholder="Industry" value="Technology"><br>
+    <button onclick="createCompany()">Create Company</button>
+    <div id="company-result" class="result"></div>
+
+    <h2>Step 4: Get All Companies</h2>
+    <button onclick="getCompanies()">Get Companies</button>
+    <div id="companies-result" class="result"></div>
+
+    <script>
+        let token = '';
+
+        async function testBackend() {
+            const result = document.getElementById('backend-result');
+            try {
+                const response = await fetch('http://localhost:5000/');
+                const data = await response.json();
+                result.className = 'result success';
+                result.innerHTML = 'Backend is running!<br>' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = 'Backend error: ' + error.message;
+            }
+        }
+
+        async function signup() {
+            const result = document.getElementById('signup-result');
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/signup', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: document.getElementById('name').value,
+                        email: document.getElementById('email').value,
+                        password: document.getElementById('password').value,
+                        role: 'admin'
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    token = data.token;
+                    result.className = 'result success';
+                    result.innerHTML = 'Signed up successfully!<br>Token saved.';
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = 'Error: ' + data.message;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = 'Error: ' + error.message;
+            }
+        }
+
+        async function createCompany() {
+            const result = document.getElementById('company-result');
+            if (!token) {
+                result.className = 'result error';
+                result.innerHTML = 'Please sign up first!';
+                return;
+            }
+            try {
+                const response = await fetch('http://localhost:5000/api/companies', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        name: document.getElementById('company-name').value,
+                        industry: document.getElementById('industry').value
+                    })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    result.className = 'result success';
+                    result.innerHTML = 'Company created!<br>' + JSON.stringify(data.company, null, 2);
+                } else {
+                    result.className = 'result error';
+                    result.innerHTML = 'Error: ' + data.message;
+                }
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = 'Error: ' + error.message;
+            }
+        }
+
+        async function getCompanies() {
+            const result = document.getElementById('companies-result');
+            if (!token) {
+                result.className = 'result error';
+                result.innerHTML = 'Please sign up first!';
+                return;
+            }
+            try {
+                const response = await fetch('http://localhost:5000/api/companies', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                const data = await response.json();
+                result.className = 'result success';
+                result.innerHTML = 'Companies:<br><pre>' + JSON.stringify(data, null, 2) + '</pre>';
+            } catch (error) {
+                result.className = 'result error';
+                result.innerHTML = 'Error: ' + error.message;
+            }
+        }
+    </script>
+</body>
+
+</html>

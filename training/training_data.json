@@ -1,0 +1,462 @@
+[
+  {
+    "text": "We reduced our carbon footprint by 20% using solar panels.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "Our waste management protocols ensure zero landfill usage.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "Water usage has decreased due to new recycling initiatives.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "The company invests in renewable energy sources like wind and solar.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "Scope 1 and Scope 2 emissions have been neutralized.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "We are committed to preserving biodiversity in our areas of operation.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "Energy efficiency upgrades across facilities reduced total electricity consumption.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "The company achieved a year-on-year reduction in greenhouse gas emissions.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "We implemented rainwater harvesting systems at multiple operational sites.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "Hazardous waste is safely treated and disposed of in compliance with regulations.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "Life cycle assessments are conducted to minimize environmental impact of products.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "The organization transitioned to low-emission transportation for logistics.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "Environmental impact assessments are mandatory for all new projects.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "We increased the use of biodegradable materials in packaging solutions.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "Air quality monitoring systems are installed at major manufacturing locations.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "The company has set science-based targets to reduce carbon emissions.",
+    "label": "Environmental",
+    "strength": "High"
+  },
+  {
+    "text": "We are committed to a diverse and inclusive workforce.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "Employee safety training hours increased by 15% this quarter.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "Our community outreach program helped 500 local families.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "Human rights violations are strictly prohibited in our supply chain.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "We provide mental health support and wellbeing programs.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "Our goal is to hire 50% more women in leadership roles.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "Employee engagement surveys are conducted annually to improve workplace satisfaction.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "We provide equal employment opportunities regardless of gender or background.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "Training programs support continuous skill development for all employees.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "The organization enforces strict workplace health and safety standards.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "Parental leave policies support work-life balance for employees.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "We actively engage with local communities through education initiatives.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "Supplier assessments include labor rights and working condition audits.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "Employee turnover rates declined following improvements in wellbeing programs.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "The company supports fair wages across its global operations.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "Diversity metrics are tracked to ensure inclusive hiring practices.",
+    "label": "Social",
+    "strength": "High"
+  },
+  {
+    "text": "The board approved a new corporate governance framework this year.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Independent directors constitute 75% of our board composition.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Anti-corruption policies are enforced across all business units.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Risk management frameworks are reviewed and updated annually.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "The audit committee oversees financial reporting and internal controls.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Shareholder voting rights are protected under our governance policies.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Executive succession planning ensures leadership continuity.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Transparency in financial disclosures is a core governance principle.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "The company maintains a code of conduct for all employees and contractors.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Board diversity targets include gender and ethnic representation.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Conflicts of interest are disclosed and managed appropriately.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Internal audit functions report directly to the board.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Regulatory compliance is monitored through quarterly reviews.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Stakeholder engagement processes ensure accountability to investors.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "The remuneration committee aligns pay with sustainability performance.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "The board of directors meets quarterly to review risk policies.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "We maintain strict compliance with all federal regulations.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Executive compensation is tied to long-term performance metrics.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Our ethics committee audits all third-party vendors for corruption.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Data privacy and cybersecurity are top priorities for the board.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Whistleblower policies protect employees who report misconduct.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Our Nominating and Corporate Governance Committee oversees the board's composition.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "We adhere to the highest standards of ethical business conduct.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "The Leadership Development and Compensation Committee reviews executive pay.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Our Code of Business Conduct and Ethics applies to all employees and directors.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "The Audit Committee oversees the integrity of our financial statements.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "We engage with shareholders on matters of corporate governance and sustainability.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Risk oversight is a key responsibility of the Board of Directors.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "We have established a robust framework for internal controls and compliance.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "The company provides regular training on anti-bribery and anti-corruption policies.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Independent directors comprise the majority of our Board.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "We disclose our political contributions and lobbying activities.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "Our privacy policy ensures the protection of customer and employee data.",
+    "label": "Governance",
+    "strength": "High"
+  },
+  {
+    "text": "This page was intentionally left blank.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "Table of Contents.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "Forward-looking statements involve risks and uncertainties.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "Introduction from the CEO.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "I found myself reflecting on the past year.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "We entered our fiftieth year as a company.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "Click here to read more.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "Fiscal year 2024 results.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "Copyright 2024 Microsoft Corporation.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "See page 45 for more details.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "Appendix A: Financial Tables.",
+    "label": "Irrelevant",
+    "strength": "None"
+  },
+  {
+    "text": "The board failed to meet independence requirements.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "Regulatory penalties were imposed due to compliance failures.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "Whistleblower complaints increased by 40% year-on-year.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "Audit findings revealed weaknesses in internal controls.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "Board independence declined compared to last year.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "The company faced litigation regarding executive compensation.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "There is a lack of diversity within the board of directors.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "Shareholders voted against the proposed remuneration report.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "Internal audits identified significant gaps in data privacy compliance.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "The CEO also serves as the Chairman, reducing board independence.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "Transparency regarding political lobbying remains limited.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "The company does not disclose its full tax payments.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "No independent review of the ESG report was conducted.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "The board lacks a dedicated expertise in sustainability matters.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "Executive bonuses are not linked to any ESG performance targets.",
+    "label": "Governance",
+    "strength": "Low"
+  },
+  {
+    "text": "The company has repeatedly delayed the publication of its annual report.",
+    "label": "Governance",
+    "strength": "Low"
+  }
+]

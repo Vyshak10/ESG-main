@@ -1,0 +1,116 @@
+[
+    {"text": "We reduced our carbon footprint by 20% using solar panels.", "label": "Environmental"},
+    {"text": "Our waste management protocols ensure zero landfill usage.", "label": "Environmental"},
+    {"text": "Water usage has decreased due to new recycling initiatives.", "label": "Environmental"},
+    {"text": "The company invests in renewable energy sources like wind and solar.", "label": "Environmental"},
+    {"text": "Scope 1 and Scope 2 emissions have been neutralized.", "label": "Environmental"},
+    {"text": "We are committed to preserving biodiversity in our areas of operation.", "label": "Environmental"},
+    
+    {"text": "We are committed to a diverse and inclusive workforce.", "label": "Social"},
+    {"text": "Employee safety training hours increased by 15% this quarter.", "label": "Social"},
+    {"text": "Our community outreach program helped 500 local families.", "label": "Social"},
+    {"text": "Human rights violations are strictly prohibited in our supply chain.", "label": "Social"},
+    {"text": "We provide mental health support and wellbeing programs.", "label": "Social"},
+    {"text": "Our goal is to hire 50% more women in leadership roles.", "label": "Social"},
+    
+    {"text": "The board of directors meets quarterly to review risk policies.", "label": "Governance"},
+    {"text": "We maintain strict compliance with all federal regulations.", "label": "Governance"},
+    {"text": "Executive compensation is tied to long-term performance metrics.", "label": "Governance"},
+    {"text": "Our ethics committee audits all third-party vendors for corruption.", "label": "Governance"},
+    {"text": "Data privacy and cybersecurity are top priorities for the board.", "label": "Governance"},
+    {"text": "Whistleblower policies protect employees who report misconduct.", "label": "Governance"},
+
+    {"text": "This page was intentionally left blank.", "label": "Irrelevant"},
+    {"text": "Table of Contents.", "label": "Irrelevant"},
+    {"text": "Forward-looking statements involve risks and uncertainties.", "label": "Irrelevant"},
+    {"text": "Introduction from the CEO.", "label": "Irrelevant"},
+    {"text": "I found myself reflecting on the past year.", "label": "Irrelevant"},
+    {"text": "We entered our fiftieth year as a company.", "label": "Irrelevant"},
+    {"text": "Click here to read more.", "label": "Irrelevant"},
+    {"text": "Fiscal year 2024 results.", "label": "Irrelevant"},
+    {"text": "Copyright 2024 Microsoft Corporation.", "label": "Irrelevant"}
+    ,
+  {
+    "text": "Energy efficiency upgrades across facilities reduced total electricity consumption.",
+    "label": "Environmental"
+  },
+  {
+    "text": "The company achieved a year-on-year reduction in greenhouse gas emissions.",
+    "label": "Environmental"
+  },
+  {
+    "text": "We implemented rainwater harvesting systems at multiple operational sites.",
+    "label": "Environmental"
+  },
+  {
+    "text": "Hazardous waste is safely treated and disposed of in compliance with regulations.",
+    "label": "Environmental"
+  },
+  {
+    "text": "Life cycle assessments are conducted to minimize environmental impact of products.",
+    "label": "Environmental"
+  },
+  {
+    "text": "The organization transitioned to low-emission transportation for logistics.",
+    "label": "Environmental"
+  },
+  {
+    "text": "Environmental impact assessments are mandatory for all new projects.",
+    "label": "Environmental"
+  },
+  {
+    "text": "We increased the use of biodegradable materials in packaging solutions.",
+    "label": "Environmental"
+  },
+  {
+    "text": "Air quality monitoring systems are installed at major manufacturing locations.",
+    "label": "Environmental"
+  },
+  {
+    "text": "The company has set science-based targets to reduce carbon emissions.",
+    "label": "Environmental"
+  },
+
+  {
+    "text": "Employee engagement surveys are conducted annually to improve workplace satisfaction.",
+    "label": "Social"
+  },
+  {
+    "text": "We provide equal employment opportunities regardless of gender or background.",
+    "label": "Social"
+  },
+  {
+    "text": "Training programs support continuous skill development for all employees.",
+    "label": "Social"
+  },
+  {
+    "text": "The organization enforces strict workplace health and safety standards.",
+    "label": "Social"
+  },
+  {
+    "text": "Parental leave policies support work-life balance for employees.",
+    "label": "Social"
+  },
+  {
+    "text": "We actively engage with local communities through education initiatives.",
+    "label": "Social"
+  },
+  {
+    "text": "Supplier assessments include labor rights and working condition audits.",
+    "label": "Social"
+  },
+  {
+    "text": "Employee turnover rates declined following improvements in wellbeing programs.",
+    "label": "Social"
+  },
+  {
+    "text": "The company supports fair wages across its global operations.",
+    "label": "Social"
+  },
+  {
+    "text": "Diversity metrics are tracked to ensure inclusive hiring practices.",
+    "label": "Social"
+  }
+
+    
+]

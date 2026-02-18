@@ -22,6 +22,10 @@ const reportSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+    referenceYear: {
+        type: Number,
+        default: () => new Date().getFullYear() // Default to current year if not found
+    },
     processingStatus: {
         type: String,
         enum: ['pending', 'processing', 'completed', 'failed'],

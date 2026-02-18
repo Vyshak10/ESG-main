@@ -71,12 +71,25 @@ router.post('/upload', [auth, requireAdmin], upload.single('report'), async (req
         }
 
         // Check Python service health
-        const serviceHealthy = await esgProcessor.checkServiceHealth();
-        if (!serviceHealthy) {
+        const healthStatus = await esgProcessor.checkServiceHealth();
+
+        if (!healthStatus.isHealthy) {
             fs.unlinkSync(req.file.path);
-            return res.status(503).json({
+
+            let statusCode = 503;
+            let message = 'ESG analysis service is currently unavailable';
+
+            if (healthStatus.status === 'loading') {
+                message = 'AI Models are warming up (Downloading/Loading 1GB+ models). Please wait 1-2 minutes and try again.';
+            } else if (healthStatus.status === 'degraded') {
+                statusCode = 500;
+                message = `AI Service Error: ${healthStatus.details}`;
+            }
+
+            return res.status(statusCode).json({
                 success: false,
-                message: 'ESG analysis service is currently unavailable'
+                message: message,
+                details: healthStatus.details
             });
         }
 

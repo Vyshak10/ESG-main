@@ -109,7 +109,11 @@ const CompanyDetail = () => {
                 }}
             >
                 <Toolbar>
-                    <Button color="inherit" onClick={() => navigate(dashboardRoute)} startIcon={<ArrowBack />}>
+                    <Button
+                        onClick={() => navigate(dashboardRoute)}
+                        startIcon={<ArrowBack />}
+                        sx={{ color: 'text.primary' }}
+                    >
                         Back
                     </Button>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 2, fontWeight: 600 }}>
@@ -125,12 +129,15 @@ const CompanyDetail = () => {
                     )}
                     <IconButton
                         onClick={() => fetchCompanyDetails()}
-                        color="inherit"
                         title="Refresh data"
+                        sx={{ color: 'text.primary' }}
                     >
                         <Refresh />
                     </IconButton>
-                    <IconButton onClick={toggleTheme} color="inherit">
+                    <IconButton
+                        onClick={toggleTheme}
+                        sx={{ color: 'text.primary' }}
+                    >
                         {mode === 'dark' ? <LightMode /> : <DarkMode />}
                     </IconButton>
                 </Toolbar>

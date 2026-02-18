@@ -1,14 +1,17 @@
-from fastapi import FastAPI, File, UploadFile, HTTPException, Form
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel
-from typing import Optional, Dict, Any
+import asyncio
+import uuid
+import logging
 import os
 import tempfile
-import logging
 from datetime import datetime
+from typing import Optional, Dict, Any
 
-from esg_analyzer import SimplifiedESGAnalyzer
+from fastapi import FastAPI, File, UploadFile, HTTPException, Form, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+# Import your analyzer class
+from esg_analyzer import ESGAnalyzer
 
 # Configure logging
 logging.basicConfig(
@@ -17,160 +20,166 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Initialize FastAPI app
 app = FastAPI(
     title="ESG Analytics API",
-    description="AI-powered ESG analysis for sustainability reports",
-    version="1.0.0"
+    description="AI-powered ESG analysis with Background Processing",
+    version="2.1.0"
 )
 
-# Configure CORS
+# CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # In production, specify exact origins
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Initialize ESG analyzer
-esg_analyzer = SimplifiedESGAnalyzer()
+# --- GLOBAL STATE (In-Memory Database) ---
+# Stores the results of the analysis. 
+# In a real startup, you'd use Redis or a SQL Database.
+analysis_jobs: Dict[str, dict] = {}
 
-# Response models
-class HealthResponse(BaseModel):
+# Global variable for the model (starts as None)
+esg_analyzer: Optional[ESGAnalyzer] = None
+
+# --- LAZY LOADER ---
+def get_analyzer():
+    """
+    Loads the model only when needed. 
+    Prevents server crash on startup.
+    """
+    global esg_analyzer
+    if esg_analyzer is not None:
+        return esg_analyzer
+
+    logger.info("Initializing ESG Analyzer model (First run)...")
+    try:
+        esg_analyzer = ESGAnalyzer()
+        logger.info("ESG Analyzer loaded successfully!")
+        return esg_analyzer
+    except Exception as e:
+        logger.error(f"CRITICAL: Failed to load model: {e}")
+        return None
+
+# --- BACKGROUND WORKER ---
+def process_analysis_task(task_id: str, file_path: str, company_name: str):
+    """
+    This function runs in the background.
+    """
+    logger.info(f"Task {task_id}: Starting background analysis for {company_name}")
+    
+    try:
+        # Load model (this might take time on first run)
+        analyzer = get_analyzer()
+        
+        if not analyzer:
+            raise Exception("Model failed to initialize on server.")
+
+        # Run the heavy analysis
+        result = analyzer.analyze_document(file_path, company_name)
+        
+        # Check for internal errors in result
+        if "error" in result:
+            analysis_jobs[task_id] = {"status": "failed", "error": result["error"]}
+        else:
+            analysis_jobs[task_id] = {"status": "completed", "result": result}
+            
+        logger.info(f"Task {task_id}: Completed successfully.")
+
+    except Exception as e:
+        logger.error(f"Task {task_id}: Failed with error: {e}")
+        analysis_jobs[task_id] = {"status": "failed", "error": str(e)}
+        
+    finally:
+        # Cleanup temp file
+        if os.path.exists(file_path):
+            try:
+                os.remove(file_path)
+            except:
+                pass
+
+# --- API MODELS ---
+class TaskResponse(BaseModel):
+    task_id: str
     status: str
-    timestamp: str
-    service: str
+    message: str
 
-class AnalysisResponse(BaseModel):
-    success: bool
-    company_name: str
-    scores: Dict[str, Any]
-    greenwashing_risk: Dict[str, Any]
-    insights: list
-    total_segments_analyzed: int
-    category_distribution: Dict[str, int]
-    greenwashing_alerts: Optional[list] = None
+class ResultResponse(BaseModel):
+    task_id: str
+    status: str
+    result: Optional[dict] = None
+    error: Optional[str] = None
 
+# --- ENDPOINTS ---
 
-@app.get("/", response_model=HealthResponse)
-async def root():
-    """Root endpoint"""
-    return {
-        "status": "online",
-        "timestamp": datetime.now().isoformat(),
-        "service": "ESG Analytics API"
-    }
-
-
-@app.get("/health", response_model=HealthResponse)
+@app.get("/health")
 async def health_check():
-    """Health check endpoint"""
+    """Simple health check"""
     return {
         "status": "healthy",
-        "timestamp": datetime.now().isoformat(),
-        "service": "ESG Analytics API"
+        "model_loaded": esg_analyzer is not None,
+        "active_jobs": len(analysis_jobs)
     }
 
-
-@app.post("/analyze", response_model=AnalysisResponse)
-async def analyze_report(
-    file: UploadFile = File(..., description="PDF sustainability report"),
-    company_name: str = Form(..., description="Company name")
+@app.post("/analyze", response_model=TaskResponse)
+async def start_analysis(
+    background_tasks: BackgroundTasks,
+    file: UploadFile = File(...),
+    company_name: str = Form(...)
 ):
     """
-    Analyze a PDF sustainability report and generate ESG scores
-    
-    Args:
-        file: PDF file upload
-        company_name: Name of the company
-    
-    Returns:
-        Complete ESG analysis with scores and greenwashing detection
+    Step 1: Upload file and start background job.
+    Returns a Task ID immediately.
     """
-    logger.info(f"Received analysis request for company: {company_name}")
-    
-    # Validate file type
+    # Validate PDF
     if not file.filename.endswith('.pdf'):
-        raise HTTPException(
-            status_code=400,
-            detail="Only PDF files are supported"
-        )
-    
-    # Create temporary file to store upload
-    temp_file = None
+        raise HTTPException(status_code=400, detail="Only PDF files are supported")
+
     try:
-        # Save uploaded file to temporary location
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.pdf') as temp_file:
+        # Generate ID
+        task_id = str(uuid.uuid4())
+        
+        # Save file to disk so background worker can read it
+        fd, temp_path = tempfile.mkstemp(suffix=".pdf")
+        with os.fdopen(fd, 'wb') as tmp:
             content = await file.read()
-            temp_file.write(content)
-            temp_path = temp_file.name
-        
-        logger.info(f"Saved PDF to temporary file: {temp_path}")
-        
-        # Run ESG analysis
-        logger.info("Starting ESG analysis...")
-        result = esg_analyzer.analyze_document(temp_path, company_name)
-        
-        if "error" in result:
-            logger.error(f"Analysis error: {result['error']}")
-            raise HTTPException(
-                status_code=500,
-                detail=result['error']
-            )
-        
-        logger.info(f"Analysis complete. Total score: {result['scores']['total_esg_score']}")
-        
+            tmp.write(content)
+
+        # Initialize job status
+        analysis_jobs[task_id] = {"status": "processing"}
+
+        # Start background task
+        background_tasks.add_task(process_analysis_task, task_id, temp_path, company_name)
+
         return {
-            "success": True,
-            **result
+            "task_id": task_id,
+            "status": "processing",
+            "message": "Analysis started in background"
         }
-    
-    except HTTPException:
-        raise
+
     except Exception as e:
-        logger.error(f"Error during analysis: {str(e)}", exc_info=True)
-        raise HTTPException(
-            status_code=500,
-            detail=f"Analysis failed: {str(e)}"
-        )
+        logger.error(f"Upload failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Upload failed: {str(e)}")
+
+@app.get("/results/{task_id}", response_model=ResultResponse)
+async def get_results(task_id: str):
+    """
+    Step 2: Poll this endpoint to get the result.
+    """
+    job = analysis_jobs.get(task_id)
     
-    finally:
-        # Clean up temporary file
-        if temp_file and os.path.exists(temp_path):
-            try:
-                os.unlink(temp_path)
-                logger.info("Cleaned up temporary file")
-            except Exception as e:
-                logger.warning(f"Failed to delete temporary file: {e}")
-
-
-@app.get("/stats")
-async def get_stats():
-    """Get API statistics"""
+    if not job:
+        raise HTTPException(status_code=404, detail="Task ID not found")
+        
     return {
-        "service": "ESG Analytics API",
-        "version": "1.0.0",
-        "features": [
-            "PDF text extraction",
-            "ESG classification (Environmental, Social, Governance)",
-            "Sentiment analysis",
-            "Greenwashing detection with ChromaDB",
-            "Quantitative metrics extraction",
-            "Comprehensive scoring"
-        ],
-        "supported_formats": ["PDF"]
+        "task_id": task_id,
+        "status": job["status"],
+        "result": job.get("result"),
+        "error": job.get("error")
     }
-
 
 if __name__ == "__main__":
     import uvicorn
-    
-    # Run the server
-    uvicorn.run(
-        "main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
-        log_level="info"
-    )
+    # workers=1 is SAFER for heavy AI models to prevent RAM crashes
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True, workers=1)

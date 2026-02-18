@@ -12,6 +12,7 @@ import UserDashboard from './pages/UserDashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import CompanyDetail from './pages/CompanyDetail';
 import AdminUpload from './pages/AdminUpload';
+import CompanyComparison from './pages/CompanyComparison';
 
 function DashboardRouter() {
     const { user } = useAuth();
@@ -55,6 +56,15 @@ function AppContent() {
                             }
                         />
 
+                        <Route
+                            path="/compare"
+                            element={
+                                <ProtectedRoute>
+                                    <CompanyComparison />
+                                </ProtectedRoute>
+                            }
+                        />
+
                         {/* Admin Routes */}
                         <Route
                             path="/admin/dashboard"
@@ -70,6 +80,15 @@ function AppContent() {
                             element={
                                 <ProtectedRoute adminOnly>
                                     <AdminUpload />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        <Route
+                            path="/admin/compare"
+                            element={
+                                <ProtectedRoute adminOnly>
+                                    <CompanyComparison />
                                 </ProtectedRoute>
                             }
                         />

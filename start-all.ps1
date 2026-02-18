@@ -14,7 +14,7 @@ if ($null -eq $mongoProcess) {
 
 # Start Python FastAPI Service
 Write-Host "Starting Python FastAPI Service..." -ForegroundColor Cyan
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd python-service; python main.py"
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd python-service; .\venv\Scripts\python.exe main.py"
 Start-Sleep -Seconds 3
 
 # Start Node.js Backend

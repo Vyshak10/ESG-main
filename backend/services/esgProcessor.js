@@ -6,7 +6,7 @@ const Report = require('../models/Report');
 
 class ESGProcessorService {
     constructor() {
-        this.pythonServiceUrl = process.env.PYTHON_SERVICE_URL || 'http://localhost:8000';
+        this.pythonServiceUrl = process.env.PYTHON_SERVICE_URL || 'http://127.0.0.1:8000';
     }
 
     /**
@@ -26,6 +26,10 @@ class ESGProcessorService {
                 throw new Error('Company not found');
             }
 
+            // Extract year from filename (e.g., "2023-report.pdf" -> 2023)
+            const yearMatch = originalName.match(/\b(19|20)\d{2}\b/);
+            const extractedYear = yearMatch ? parseInt(yearMatch[0]) : new Date().getFullYear();
+
             // Create report record in database
             const report = new Report({
                 company: companyId,
@@ -33,7 +37,8 @@ class ESGProcessorService {
                 originalName,
                 fileSize,
                 processingStatus: 'processing',
-                uploadedBy: userId
+                uploadedBy: userId,
+                referenceYear: extractedYear
             });
 
             await report.save();
@@ -41,48 +46,112 @@ class ESGProcessorService {
             console.log(`Processing report ${report._id} for company ${company.name}`);
 
             try {
-                // Send PDF to Python service for analysis
-                const formData = new FormData();
-                formData.append('file', fs.createReadStream(filePath));
-                formData.append('company_name', company.name);
+                // 1. Submit Analysis Job
+                console.log(`Submitting analysis job to Python service...`);
+                let taskId;
+                try {
+                    const formData = new FormData();
+                    formData.append('file', fs.createReadStream(filePath));
+                    formData.append('company_name', company.name);
 
-                const response = await axios.post(
-                    `${this.pythonServiceUrl}/analyze`,
-                    formData,
-                    {
-                        headers: formData.getHeaders(),
-                        timeout: 120000 // 2 minute timeout
+                    const submitResponse = await axios.post(
+                        `${this.pythonServiceUrl}/analyze`,
+                        formData,
+                        {
+                            headers: formData.getHeaders(),
+                            timeout: 10000 // Short timeout for submission
+                        }
+                    );
+                    taskId = submitResponse.data.task_id;
+                    console.log(`Job submitted. Task ID: ${taskId}`);
+                } catch (submitError) {
+                    console.error('Failed to submit analysis job:', submitError.message);
+                    throw new Error(`Failed to start analysis: ${submitError.message}`);
+                }
+
+                // 2. Poll for Results
+                let analysisResult = null;
+                let attempts = 0;
+                const maxAttempts = 60; // 5 minutes (if polling every 5s)
+                const pollInterval = 5000; // 5 seconds
+
+                while (attempts < maxAttempts) {
+                    await new Promise(resolve => setTimeout(resolve, pollInterval));
+                    attempts++;
+
+                    try {
+                        const statusResponse = await axios.get(`${this.pythonServiceUrl}/results/${taskId}`);
+                        const statusData = statusResponse.data;
+                        console.log(`Polling Task ${taskId}: ${statusData.status}`);
+
+                        if (statusData.status === 'completed') {
+                            analysisResult = statusData.result;
+                            break;
+                        } else if (statusData.status === 'failed') {
+                            throw new Error(statusData.error || 'Analysis failed in Python service');
+                        }
+                        // If 'processing', continue loop
+                    } catch (pollError) {
+                        console.error(`Polling error for Task ${taskId}:`, pollError.message);
+                        if (attempts > 5 && pollError.response?.status === 404) {
+                            throw new Error('Task ID lost by server');
+                        }
                     }
-                );
+                }
 
-                const analysisResult = response.data;
+                if (!analysisResult) {
+                    throw new Error('Analysis timed out after 5 minutes');
+                }
 
                 // Update report with analysis results
                 report.processingStatus = 'completed';
                 report.processedAt = new Date();
 
-                // Extract scores
+                // Extract scores (Convert 0-1 to 0-100 for compatibility)
                 report.scores = {
-                    overall: analysisResult.scores.total_esg_score,
-                    environmental: analysisResult.scores.dimension_scores.Environmental,
-                    social: analysisResult.scores.dimension_scores.Social,
-                    governance: analysisResult.scores.dimension_scores.Governance
+                    overall: (analysisResult.overall_score || 0) * 100,
+                    environmental: (analysisResult.environmental?.score || 0) * 100,
+                    social: (analysisResult.social?.score || 0) * 100,
+                    governance: (analysisResult.governance?.score || 0) * 100
                 };
 
-                // Extract greenwashing risk
+                // Extract or Estimate Greenwashing Risk
+                // New Python model doesn't explicitly calculate this yet, so we estimate or default.
+                // Logic: If average score is very low but description is glowing? 
+                // For now, default to Low to avoid false alarms.
                 report.greenwashingRisk = {
-                    level: analysisResult.greenwashing_risk.level,
-                    score: analysisResult.greenwashing_risk.score,
-                    alertCount: analysisResult.greenwashing_risk.alert_count || 0,
-                    description: analysisResult.greenwashing_risk.description
+                    level: 'Low',
+                    score: 10,
+                    alertCount: 0,
+                    description: "Automated risk assessment not fully available in this version."
                 };
+
+                // Flatten Evidence for Greenwashing Alerts/Insights
+                const evidence = [];
+                if (analysisResult.environmental?.key_evidence) evidence.push(...analysisResult.environmental.key_evidence);
+                if (analysisResult.social?.key_evidence) evidence.push(...analysisResult.social.key_evidence);
+                if (analysisResult.governance?.key_evidence) evidence.push(...analysisResult.governance.key_evidence);
 
                 // Store analysis details
                 report.analysisDetails = {
-                    totalSegmentsAnalyzed: analysisResult.total_segments_analyzed,
-                    categoryDistribution: analysisResult.category_distribution,
-                    insights: analysisResult.insights || [],
-                    greenwashingAlerts: analysisResult.greenwashing_alerts || []
+                    totalSegmentsAnalyzed: 0, // Not provided in new API
+                    categoryDistribution: {
+                        Environmental: 0,
+                        Social: 0,
+                        Governance: 0
+                    },
+                    insights: [
+                        `Environmental Sentiment: ${analysisResult.environmental?.sentiment || 'N/A'}`,
+                        `Social Sentiment: ${analysisResult.social?.sentiment || 'N/A'}`,
+                        `Governance Sentiment: ${analysisResult.governance?.sentiment || 'N/A'}`
+                    ],
+                    greenwashingAlerts: evidence.map(text => ({
+                        page: 0,
+                        category: "General",
+                        text: text,
+                        riskLevel: "Info",
+                        reason: "Key Evidence identified by AI"
+                    }))
                 };
 
                 await report.save();
@@ -124,19 +193,28 @@ class ESGProcessorService {
         }
     }
 
-    /**
-     * Check if Python service is available
-     * @returns {Promise<boolean>}
-     */
     async checkServiceHealth() {
         try {
+            console.log(`Checking Python service health at ${this.pythonServiceUrl}/health...`);
             const response = await axios.get(`${this.pythonServiceUrl}/health`, {
-                timeout: 5000
+                timeout: 10000 // Increased timeout
             });
-            return response.data.status === 'healthy';
+            console.log(`Python service health response: ${response.status} ${JSON.stringify(response.data)}`);
+            return {
+                isHealthy: response.data.status === 'healthy',
+                status: response.data.status,
+                details: response.data.details || response.data.error
+            };
         } catch (error) {
-            console.error('Python service health check failed:', error.message);
-            return false;
+            console.error(`Python service health check failed to ${this.pythonServiceUrl}:`, error.message);
+            if (error.response) {
+                console.error('Error response data:', error.response.data);
+            }
+            return {
+                isHealthy: false,
+                status: 'unreachable',
+                details: error.message
+            };
         }
     }
 }

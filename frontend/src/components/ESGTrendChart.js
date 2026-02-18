@@ -6,12 +6,12 @@ import { Box, Typography } from '@mui/material';
 const ESGTrendChart = ({ reports }) => {
     const theme = useTheme();
 
-    // Prepare data for chart (sort by date, oldest first)
+    // Prepare data for chart (sort by referenceYear, oldest first)
     const chartData = reports
         .filter(r => r.processingStatus === 'completed')
-        .sort((a, b) => new Date(a.uploadDate) - new Date(b.uploadDate))
+        .sort((a, b) => (a.referenceYear || 0) - (b.referenceYear || 0))
         .map(report => ({
-            date: new Date(report.uploadDate).toLocaleDateString('en-US', {
+            date: report.referenceYear ? `${report.referenceYear}` : new Date(report.uploadDate).toLocaleDateString('en-US', {
                 month: 'short',
                 year: 'numeric'
             }),

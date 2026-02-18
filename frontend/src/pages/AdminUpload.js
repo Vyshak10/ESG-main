@@ -102,16 +102,25 @@ const AdminUpload = () => {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar
+                position="static"
+                elevation={0}
+                sx={{
+                    backdropFilter: 'blur(20px)',
+                    backgroundColor: theme => theme.palette.mode === 'dark' ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+                    borderBottom: 1,
+                    borderColor: 'divider'
+                }}
+            >
                 <Toolbar>
                     <Button
-                        color="inherit"
                         onClick={() => navigate('/admin/dashboard')}
                         startIcon={<ArrowBack />}
+                        sx={{ color: 'text.primary' }}
                     >
                         Back to Dashboard
                     </Button>
-                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 2 }}>
+                    <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 2, color: 'text.primary' }}>
                         Upload Report - {company.name}
                     </Typography>
                 </Toolbar>

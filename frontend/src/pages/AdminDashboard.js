@@ -6,6 +6,7 @@ import {
     Card,
     CardContent,
     CardActions,
+    CardActionArea,
     Typography,
     Box,
     AppBar,
@@ -34,7 +35,8 @@ import {
     LightMode,
     TrendingUp,
     Assessment,
-    Visibility
+    Visibility,
+    Compare
 } from '@mui/icons-material';
 import { useAuth } from '../contexts/AuthContext';
 import { useThemeMode } from '../contexts/ThemeContext';
@@ -191,25 +193,27 @@ const AdminDashboard = () => {
                         {user?.name?.charAt(0).toUpperCase()}
                     </Avatar>
 
-                    <Typography variant="body2" sx={{ mr: 2, display: { xs: 'none', sm: 'block' } }}>
+                    <Typography variant="body2" sx={{ mr: 2, display: { xs: 'none', sm: 'block' }, color: 'text.primary' }}>
                         {user?.name}
                     </Typography>
 
-                    <IconButton onClick={toggleTheme} sx={{ mr: 1 }}>
+                    <IconButton
+                        onClick={toggleTheme}
+                        sx={{ mr: 1, color: 'text.primary' }}
+                    >
                         {mode === 'dark' ? <LightMode /> : <DarkMode />}
                     </IconButton>
 
                     <Button
-                        color="inherit"
                         onClick={handleLogout}
                         startIcon={<Logout />}
-                        sx={{ display: { xs: 'none', md: 'flex' } }}
+                        sx={{ display: { xs: 'none', md: 'flex' }, color: 'text.primary' }}
                     >
                         Logout
                     </Button>
                     <IconButton
                         onClick={handleLogout}
-                        sx={{ display: { xs: 'flex', md: 'none' } }}
+                        sx={{ display: { xs: 'flex', md: 'none' }, color: 'text.primary' }}
                     >
                         <Logout />
                     </IconButton>
@@ -247,7 +251,7 @@ const AdminDashboard = () => {
 
                         {/* Stats Cards */}
                         <Grid container spacing={3} sx={{ mt: 2 }}>
-                            <Grid item xs={12} sm={6} md={3}>
+                            <Grid item xs={12} sm={6} md={4}>
                                 <Card sx={{
                                     background: mode === 'dark'
                                         ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
@@ -265,7 +269,7 @@ const AdminDashboard = () => {
                                     </CardContent>
                                 </Card>
                             </Grid>
-                            <Grid item xs={12} sm={6} md={3}>
+                            <Grid item xs={12} sm={6} md={4}>
                                 <Card sx={{
                                     background: mode === 'dark'
                                         ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'
@@ -281,6 +285,34 @@ const AdminDashboard = () => {
                                         </Typography>
                                         <Assessment />
                                     </CardContent>
+                                </Card>
+                            </Grid>
+                            <Grid item xs={12} sm={6} md={4}>
+                                <Card
+                                    sx={{
+                                        background: mode === 'dark'
+                                            ? 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+                                            : 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
+                                        color: 'white',
+                                        cursor: 'pointer',
+                                        transition: 'transform 0.2s, box-shadow 0.2s',
+                                        '&:hover': {
+                                            transform: 'translateY(-4px)',
+                                            boxShadow: 6
+                                        }
+                                    }}
+                                >
+                                    <CardActionArea onClick={() => navigate('/admin/compare')}>
+                                        <CardContent>
+                                            <Typography variant="body2" sx={{ opacity: 0.9 }}>
+                                                Company Comparison
+                                            </Typography>
+                                            <Typography variant="h3" sx={{ fontWeight: 700, my: 1 }}>
+                                                {companies.filter(c => c.latestScores?.overall).length}
+                                            </Typography>
+                                            <Compare />
+                                        </CardContent>
+                                    </CardActionArea>
                                 </Card>
                             </Grid>
                         </Grid>

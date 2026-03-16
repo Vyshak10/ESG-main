@@ -2,8 +2,8 @@ const axios = require('axios');
 const Company = require('../models/Company');
 const NewsImpact = require('../models/NewsImpact');
 
-// Top 5 authoritative news sources for ESG authenticity
-const TOP_SOURCES = 'reuters,bbc-news,bloomberg,the-guardian-uk,associated-press';
+// Authoritative news domains for ESG coverage
+const TOP_DOMAINS = 'reuters.com,bbc.co.uk,bloomberg.com,theguardian.com,apnews.com,cnbc.com,ft.com,nytimes.com,washingtonpost.com';
 
 const NEWS_API_KEY = process.env.NEWS_API_KEY;
 const NEWS_API_BASE = 'https://newsapi.org/v2/everything';
@@ -156,15 +156,17 @@ async function processNewsForCompany(company) {
     }
 
     // 1. Fetch articles from NewsAPI
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     let articles = [];
     try {
         const response = await axios.get(NEWS_API_BASE, {
             params: {
-                q: `"${company.name}"`,
-                sources: TOP_SOURCES,
+                q: `${company.name} AND (ESG OR sustainability OR environment OR carbon OR governance OR social responsibility OR emissions)`,
+                domains: TOP_DOMAINS,
                 language: 'en',
                 sortBy: 'relevancy',
                 pageSize: 20,
+                from: thirtyDaysAgo,
                 apiKey: NEWS_API_KEY
             },
             timeout: 15000

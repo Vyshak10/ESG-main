@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
     Container,
@@ -44,6 +44,10 @@ import ESGScoreCard from '../components/ESGScoreCard';
 import { ESGPieChart, ESGBarChart, GreenwashingRiskIndicator } from '../components/Charts';
 import ReportCard from '../components/ReportCard';
 import ESGTrendChart from '../components/ESGTrendChart';
+import {
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip,
+    ResponsiveContainer, Legend, PieChart, Pie, Cell
+} from 'recharts';
 
 // ─── helpers ────────────────────────────────────────────────────────────────
 
@@ -121,7 +125,7 @@ function NewsImpactSection({ companyId, companyName, originalScores, isAdmin, mo
             // Poll after 3s to give background task time to start
             setTimeout(() => {
                 fetchNews().finally(() => setRefreshing(false));
-            }, 3000);
+            }, 10000);
         } catch (err) {
             setNewsError('Refresh failed. Try again later.');
             setRefreshing(false);
@@ -282,6 +286,121 @@ function NewsImpactSection({ companyId, companyName, originalScores, isAdmin, mo
                             </Typography>
                         </Alert>
                     )}
+
+                    {/* ── Combined Visualizations ── */}
+                    <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, color: 'text.secondary' }}>
+                        SCORE COMPARISON & SENTIMENT BREAKDOWN
+                    </Typography>
+
+                    <Grid container spacing={3} mb={4}>
+                        {/* Score Comparison Bar Chart */}
+                        <Grid item xs={12} md={7}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 2.5,
+                                    borderRadius: 3,
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    bgcolor: cardBg,
+                                    height: 320
+                                }}
+                            >
+                                <Typography variant="body2" sx={{ fontWeight: 700, mb: 1, textAlign: 'center', opacity: 0.8 }}>
+                                    Original vs News-Adjusted Scores
+                                </Typography>
+                                <ResponsiveContainer width="100%" height="88%">
+                                    <BarChart
+                                        data={[
+                                            {
+                                                category: 'Environmental',
+                                                'Report Score': newsData.originalScores?.environmental ?? 0,
+                                                'News-Adjusted': newsData.newsAdjustedScores?.environmental ?? 0
+                                            },
+                                            {
+                                                category: 'Social',
+                                                'Report Score': newsData.originalScores?.social ?? 0,
+                                                'News-Adjusted': newsData.newsAdjustedScores?.social ?? 0
+                                            },
+                                            {
+                                                category: 'Governance',
+                                                'Report Score': newsData.originalScores?.governance ?? 0,
+                                                'News-Adjusted': newsData.newsAdjustedScores?.governance ?? 0
+                                            },
+                                            {
+                                                category: 'Overall',
+                                                'Report Score': newsData.originalScores?.overall ?? 0,
+                                                'News-Adjusted': newsData.newsAdjustedScores?.overall ?? 0
+                                            }
+                                        ]}
+                                        margin={{ top: 10, right: 30, left: 0, bottom: 5 }}
+                                    >
+                                        <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                                        <XAxis dataKey="category" tick={{ fontSize: 12 }} />
+                                        <YAxis domain={[0, 100]} tick={{ fontSize: 12 }} />
+                                        <RechartsTooltip
+                                            contentStyle={{
+                                                backgroundColor: mode === 'dark' ? '#1e293b' : '#fff',
+                                                border: '1px solid #e2e8f0',
+                                                borderRadius: 8,
+                                                fontSize: 13
+                                            }}
+                                        />
+                                        <Legend wrapperStyle={{ fontSize: 12 }} />
+                                        <Bar dataKey="Report Score" fill="#6c63ff" radius={[4, 4, 0, 0]} />
+                                        <Bar dataKey="News-Adjusted" fill="#00C49F" radius={[4, 4, 0, 0]} />
+                                    </BarChart>
+                                </ResponsiveContainer>
+                            </Paper>
+                        </Grid>
+
+                        {/* Sentiment Distribution Pie Chart */}
+                        <Grid item xs={12} md={5}>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 2.5,
+                                    borderRadius: 3,
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    bgcolor: cardBg,
+                                    height: 320
+                                }}
+                            >
+                                <Typography variant="body2" sx={{ fontWeight: 700, mb: 1, textAlign: 'center', opacity: 0.8 }}>
+                                    Article Sentiment Distribution
+                                </Typography>
+                                <ResponsiveContainer width="100%" height="88%">
+                                    <PieChart>
+                                        <Pie
+                                            data={(() => {
+                                                const counts = { Positive: 0, Negative: 0, Neutral: 0 };
+                                                (newsData.articles || []).forEach(a => {
+                                                    if (counts[a.sentiment] !== undefined) counts[a.sentiment]++;
+                                                });
+                                                return Object.entries(counts)
+                                                    .filter(([, v]) => v > 0)
+                                                    .map(([name, value]) => ({ name, value }));
+                                            })()}
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius={50}
+                                            outerRadius={90}
+                                            paddingAngle={4}
+                                            dataKey="value"
+                                            label={({ name, value }) => `${name}: ${value}`}
+                                        >
+                                            <Cell fill="#00C49F" />
+                                            <Cell fill="#FF6B6B" />
+                                            <Cell fill="#A0AEC0" />
+                                        </Pie>
+                                        <RechartsTooltip />
+                                        <Legend wrapperStyle={{ fontSize: 12 }} />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                            </Paper>
+                        </Grid>
+                    </Grid>
 
                     {/* ── Article Cards ── */}
                     <Typography variant="subtitle1" sx={{ fontWeight: 700, mb: 2, color: 'text.secondary' }}>
